@@ -105,7 +105,7 @@ void MooncakeTransferAgent::registerMemory(RegisterDescs const& descs)
         }
         int err = registerLocalMemory(mEngine, (void*) desc.getAddr(), desc.getLen(), "*", 1);
         TLLM_CHECK(err == 0);
-        auto mooncakeDesc = std::make_shared<MooncakeMemoryDesc>(*desc);
+        auto mooncakeDesc = std::make_shared<MooncakeMemoryDesc>(desc);
         mMemRegInfo[desc.getAddr()] = mooncakeDesc;
     }
 }
@@ -119,10 +119,10 @@ void MooncakeTransferAgent::deregisterMemory(RegisterDescs const& descs)
         if (it != mMemRegInfo.end())
         {
             auto mooncakeDesc = it->second;
-            mooncakeDesc->delRef();
-            if (mooncakeDesc->getRef())
+            mooncakeDesc->releaseRef();
+            if (mooncakeDesc->getRefCount())
                 continue;
-            int err = unregisterLocalMemory(mEngine, (void*) desc.getAddr(), desc.getLen(), "*", 1);
+            int err = unregisterLocalMemory(mEngine, (void*) desc.getAddr());
             TLLM_CHECK(err == 0);
             mMemRegInfo.erase(desc.getAddr());
         }

@@ -20,7 +20,6 @@
 #include <atomic>
 #include <mutex>
 #include <thread>
-#include <unordered_set>
 #include <vector>
 
 #include "tensorrt_llm/executor/transferAgent.h"
@@ -121,7 +120,7 @@ private:
 
     mutable std::mutex mMutex;
     transfer_engine_t mEngine;
-    std::unordered_map<uintptr_t, std::shared_ptr<MemoryInfo>> mMemRegInfo;
+    std::unordered_map<uintptr_t, std::shared_ptr<MooncakeMemoryDesc>> mMemRegInfo;
     std::string local_agent_name_;
     std::string segment_name_;
 };
