@@ -122,7 +122,7 @@ void MooncakeTransferAgent::deregisterMemory(RegisterDescs const& descs)
             mooncakeDesc->delRef();
             if (mooncakeDesc->getRef())
                 continue;
-            int err = deregisterLocalMemory(mEngine, (void*) desc.getAddr(), desc.getLen(), "*", 1);
+            int err = unregisterLocalMemory(mEngine, (void*) desc.getAddr(), desc.getLen(), "*", 1);
             TLLM_CHECK(err == 0);
             mMemRegInfo.erase(desc.getAddr());
         }
