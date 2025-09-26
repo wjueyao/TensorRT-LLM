@@ -89,12 +89,45 @@ MooncakeTransferAgent::MooncakeTransferAgent(BaseAgentConfig const& config)
         segment_name_ = ips[0];
     // if (getenv("NIXL_MOONCAKE_IP_ADDR"))
     //    segment_name_ = std::string(getenv("NIXL_MOONCAKE_IP_ADDR"));
-    engine_ = createTransferEngine("P2PHANDSHAKE", segment_name_.c_str(), "", 0, true);
+    mEngine = createTransferEngine("P2PHANDSHAKE", segment_name_.c_str(), "", 0, true);
 }
 
-void MooncakeTransferAgent::registerMemory(RegisterDescs const& descs) {}
+void MooncakeTransferAgent::registerMemory(RegisterDescs const& descs)
+{
+    for (auto const& desc : descs.getDescs())
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        auto it = mMemRegInfo.find(desc.getAddr());
+        if (it != mMemRegInfo.end())
+        {
+            it->second->addRef();
+            continue;
+        }
+        int err = registerLocalMemory(mEngine, (void*) desc.getAddr(), desc.getLen(), "*", 1);
+        TLLM_CHECK(err == 0);
+        auto mooncakeDesc = std::make_shared<MooncakeMemoryDesc>(*desc);
+        mMemRegInfo[desc.getAddr()] = mooncakeDesc;
+    }
+}
 
-void MooncakeTransferAgent::deregisterMemory(RegisterDescs const& descs) {}
+void MooncakeTransferAgent::deregisterMemory(RegisterDescs const& descs)
+{
+    for (auto const& desc : descs.getDescs())
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        auto it = mMemRegInfo.find(desc.getAddr());
+        if (it != mMemRegInfo.end())
+        {
+            auto mooncakeDesc = it->second;
+            mooncakeDesc->delRef();
+            if (mooncakeDesc->getRef())
+                continue;
+            int err = deregisterLocalMemory(mEngine, (void*) desc.getAddr(), desc.getLen(), "*", 1);
+            TLLM_CHECK(err == 0);
+            mMemRegInfo.erase(desc.getAddr());
+        }
+    }
+}
 
 void MooncakeTransferAgent::loadRemoteAgent(std::string const& name, AgentDesc const& agentDesc) {}
 
@@ -127,7 +160,7 @@ bool MooncakeTransferAgent::checkRemoteDescs(std::string const& name, MemoryDesc
 
 MooncakeTransferAgent::~MooncakeTransferAgent()
 {
-    destroyTransferEngine(engine_);
+    destroyTransferEngine(mEngine);
     TLLM_LOG_DEBUG("MooncakeTransferAgent::~MooncakeTransferAgent");
 }
 

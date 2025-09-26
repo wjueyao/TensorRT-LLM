@@ -26,6 +26,51 @@
 
 namespace tensorrt_llm::executor::kv_cache
 {
+
+class MooncakeMemoryDesc
+{
+public:
+    MooncakeMemoryDesc(MemoryDesc desc)
+        : mDesc{std::move(desc)}
+        , mRefCnt{0}
+    {
+    }
+
+    MooncakeMemoryDesc(MooncakeMemoryDesc const& other)
+        : mDesc{other.mDesc}
+        , mRefCnt{0}
+    {
+    }
+
+    MooncakeMemoryDesc& operator=(MooncakeMemoryDesc const&) = delete;
+
+    ~MooncakeMemoryDesc() = default;
+
+    void addRef() noexcept
+    {
+        ++mRefCnt;
+    }
+
+    int releaseRef() noexcept
+    {
+        return --mRefCnt;
+    }
+
+    int getRefCount() const noexcept
+    {
+        return mRefCnt;
+    }
+
+    MemoryDesc const& getDesc() const noexcept
+    {
+        return mDesc;
+    }
+
+private:
+    MemoryDesc mDesc;
+    int mRefCnt;
+};
+
 class MooncakeTransferAgent final : public BaseTransferAgent
 {
 public:
@@ -72,8 +117,9 @@ private:
         int segment_id;
     };
 
-    mutable std::mutex mutex_;
-    transfer_engine_t engine_;
+    mutable std::mutex mMutex;
+    transfer_engine_t mEngine;
+    std::unordered_map<uint64_t, std::shared_ptr<MemoryInfo>> mMemRegInfo;
     std::string local_agent_name_;
     std::string segment_name_;
 };
