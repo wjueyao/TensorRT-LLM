@@ -816,6 +816,9 @@ def main(*,
                 build_dir /
                 "tensorrt_llm/executor/cache_transmission/mooncake_utils/libtensorrt_llm_mooncake_wrapper.so",
                 lib_dir / "libtensorrt_llm_mooncake_wrapper.so")
+            build_run(
+                f'patchelf --set-rpath \'$ORIGIN/mooncake/\' {lib_dir / "libtensorrt_llm_mooncake_wrapper.so"}'
+            )
         install_file(
             build_dir /
             "tensorrt_llm/kernels/decoderMaskedMultiheadAttention/libdecoder_attention_0.so",
