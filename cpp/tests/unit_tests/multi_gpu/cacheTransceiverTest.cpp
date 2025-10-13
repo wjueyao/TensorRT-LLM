@@ -649,7 +649,12 @@ protected:
             mCacheTransBufferManager = std::make_unique<CacheTransBufferManager>(mManager.get(), maxNumTokens);
             bool isUcx = tensorrt_llm::common::getEnvUseUCXKvCache();
             bool isNixl = tensorrt_llm::common::getEnvUseNixlKvCache();
-            TLLM_LOG_INFO("Enable %s KV cache transport.", isUcx ? "UCX" : isNixl ? "NIXL" : "MPI");
+            bool isMooncake = tensorrt_llm::common::getEnvUseMooncakeKvCache();
+            TLLM_LOG_INFO("Enable %s KV cache transport.",
+                isUcx            ? "UCX"
+                    : isNixl     ? "NIXL"
+                    : isMooncake ? "MOONCAKE"
+                                 : "MPI");
 
             if (isUcx)
             {
@@ -676,7 +681,12 @@ protected:
                 setenv("TRTLLM_NIXL_PORT", std::to_string(port).c_str(), 1);
 
                 mConnectionManager = std::make_unique<texec::kv_cache::AgentConnectionManager>(
-                    mCacheTransBufferManager.get(), *mCacheState);
+                    mCacheTransBufferManager.get(), *mCacheState, "nixl");
+            }
+            else if (isMooncake)
+            {
+                mConnectionManager = std::make_unique<texec::kv_cache::AgentConnectionManager>(
+                    mCacheTransBufferManager.get(), *mCacheState, "mooncake");
             }
             else
             {
