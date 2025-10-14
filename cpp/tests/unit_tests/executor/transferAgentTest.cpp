@@ -154,7 +154,7 @@ TEST_P(TransferAgentTest, Basic2)
     xferAgent0->invalidateRemoteAgent(agent1);
 }
 
-TEST_F(TransferAgentTest, DeviceMemory)
+TEST_P(TransferAgentTest, DeviceMemory)
 {
 
     std::string const agent0{"agent0"}, agent1{"agent1"};
