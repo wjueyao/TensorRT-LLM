@@ -38,15 +38,16 @@ if(NIXL_ROOT OR MOONCAKE_ROOT)
   add_gtest(transferAgentTest transferAgentTest.cpp)
 
   if(NIXL_ROOT)
-    target_link_libraries(agentCommTest PRIVATE tensorrt_llm_nixl_wrapper)
     target_link_libraries(transferAgentTest PRIVATE tensorrt_llm_nixl_wrapper)
+    target_compile_definitions(transferAgentTest PRIVATE TEST_NIXL_BACKEND=1)
     target_compile_definitions(agentCommTest PRIVATE TEST_NIXL_BACKEND=1)
   endif()
 
   if(MOONCAKE_ROOT)
-    target_link_libraries(agentCommTest PRIVATE tensorrt_llm_mooncake_wrapper)
     target_link_libraries(transferAgentTest
                           PRIVATE tensorrt_llm_mooncake_wrapper)
+    target_compile_definitions(transferAgentTest
+                               PRIVATE TEST_MOONCAKE_BACKEND=1)
     target_compile_definitions(agentCommTest PRIVATE TEST_MOONCAKE_BACKEND=1)
   endif()
 endif()
