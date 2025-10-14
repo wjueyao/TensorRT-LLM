@@ -17,6 +17,7 @@
 #include <gtest/gtest.h>
 
 #include <filesystem>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -64,7 +65,7 @@ private:
     BaseTransferAgent* mAgentPtr{};
 };
 
-class TransferAgentTest : public ::testing::Test // NOLINT(cppcoreguidelines-pro-type-member-init)
+class TransferAgentTest : public ::testing::TestWithParam<std::string> // NOLINT(cppcoreguidelines-pro-type-member-init)
 {
 public:
     void SetUp() override
