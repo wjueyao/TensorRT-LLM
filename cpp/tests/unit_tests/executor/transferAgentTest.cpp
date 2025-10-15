@@ -283,7 +283,7 @@ TEST_P(TransferAgentTest, SyncMessage)
     xferAgent0->notifySyncMessage(agent1, syncMessage);
     TransferRequest writeReq{TransferOp::kWRITE, regMem0.getDescs(), regMem3.getDescs(), agent1};
     auto status = xferAgent0->submitTransferRequests(writeReq);
-    status->wait();
+
     auto notif = xferAgent1->getNotifiedSyncMessages();
     for (std::size_t i = 0; i < MAX_QUERY_TIMES && notif.size() == 0; i++)
     {
@@ -331,7 +331,6 @@ TEST_P(TransferAgentTest, SyncMessage)
     xferAgent1->notifySyncMessage(agent0, syncMessage4);
     TransferRequest writeReq1{TransferOp::kWRITE, regMem2.getDescs(), regMem1.getDescs(), agent0};
     auto status1 = xferAgent1->submitTransferRequests(writeReq1);
-    status1->wait();
     auto notif4 = xferAgent0->getNotifiedSyncMessages();
     for (std::size_t i = 0; i < MAX_QUERY_TIMES && notif4.size() == 0; i++)
     {
