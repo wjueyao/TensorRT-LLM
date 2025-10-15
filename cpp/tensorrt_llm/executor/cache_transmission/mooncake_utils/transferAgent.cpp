@@ -86,7 +86,7 @@ void MooncakeTransferStatus::wait() const
         // than the batch size. So, free the batch id here to workaround the issue
         // where the same batchId could be used to post multiple transfer.
         freeBatchID(mEngine, mBatchId);
-        // mBatchId = INVALID_BATCH;
+        mBatchId = INVALID_BATCH;
     }
     // Currently, we cannot distinguish between failed and completed from return value.
     TLLM_LOG_DEBUG("Transfer is completed for batch %lu (batch_id=%lu)", mBatchId, mBatchId);
