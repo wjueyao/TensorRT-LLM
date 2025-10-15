@@ -74,7 +74,11 @@ void MooncakeTransferStatus::wait() const
             }
         }
         else if (status.status == STATUS_PENDING || status.status == STATUS_WAITING)
+        {
+            TLLM_LOG_DEBUG("Transfer is pending for batch %lu, task %zu (batch_id=%lu, task_id=%zu)", mBatchId, index,
+                mBatchId, index);
             return false;
+        }
     }
     if (!has_failed)
     {
@@ -85,6 +89,7 @@ void MooncakeTransferStatus::wait() const
         // mBatchId = INVALID_BATCH;
     }
     // Currently, we cannot distinguish between failed and completed from return value.
+    TLLM_LOG_DEBUG("Transfer is completed for batch %lu (batch_id=%lu)", mBatchId, mBatchId);
     return true;
 }
 
