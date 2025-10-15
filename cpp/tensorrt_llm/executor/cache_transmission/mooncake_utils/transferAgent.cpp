@@ -82,7 +82,7 @@ void MooncakeTransferStatus::wait() const
     }
     if (!has_failed)
     {
-        markAsCompleted()
+        markAsCompleted();
     }
 
     // Currently, we cannot distinguish between failed and completed from return value.
