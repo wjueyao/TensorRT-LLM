@@ -289,6 +289,7 @@ TEST_P(TransferAgentTest, SyncMessage)
     {
         notif = xferAgent1->getNotifiedSyncMessages();
     }
+    status->wait();
     TLLM_CHECK(status->isCompleted());
     TLLM_CHECK(notif.size() == 1);
     TLLM_CHECK(notif[agent0].size() == 1);
@@ -336,6 +337,7 @@ TEST_P(TransferAgentTest, SyncMessage)
     {
         notif4 = xferAgent0->getNotifiedSyncMessages();
     }
+    status1->wait();
     TLLM_CHECK(status1->isCompleted());
     TLLM_CHECK(notif4.size() == 1);
     TLLM_CHECK(notif4[agent1].size() == 1);
