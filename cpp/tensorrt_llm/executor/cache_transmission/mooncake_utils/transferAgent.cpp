@@ -82,15 +82,21 @@ void MooncakeTransferStatus::wait() const
     }
     if (!has_failed)
     {
-        // Each batchId has the batch size, and cannot process more requests
-        // than the batch size. So, free the batch id here to workaround the issue
-        // where the same batchId could be used to post multiple transfer.
-        freeBatchID(mEngine, mBatchId);
-        mBatchId = INVALID_BATCH;
+        markAsCompleted()
     }
+
     // Currently, we cannot distinguish between failed and completed from return value.
     TLLM_LOG_DEBUG("Transfer is completed for batch %lu (batch_id=%lu)", mBatchId, mBatchId);
     return true;
+}
+
+void MooncakeTransferStatus::markAsCompleted()
+{
+    // Each batchId has the batch size, and cannot process more requests
+    // than the batch size. So, free the batch id here to workaround the issue
+    // where the same batchId could be used to post multiple transfer.
+    freeBatchID(mEngine, mBatchId);
+    mBatchId = INVALID_BATCH;
 }
 
 const std::string MooncakeBase64Helper::STANDARD_CHARS

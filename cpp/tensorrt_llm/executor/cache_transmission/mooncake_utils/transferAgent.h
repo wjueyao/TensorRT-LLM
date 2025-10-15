@@ -37,6 +37,8 @@ public:
 
     void wait() const override;
 
+    void markAsCompleted();
+
 private:
     transfer_engine_t mEngine;
     uint64_t mBatchId;
