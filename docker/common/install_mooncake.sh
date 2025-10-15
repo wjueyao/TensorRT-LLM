@@ -5,7 +5,7 @@ MOONCAKE_VERSION="v0.3.5"
 MOONCAKE_REPO="https://github.com/kvcache-ai/Mooncake.git"
 MOONCAKE_INSTALL_PATH="/usr/local"
 
-git clone ${MOONCAKE_VERSION} ${MOONCAKE_REPO}
+git clone --depth 1 -b ${MOONCAKE_VERSION} ${MOONCAKE_REPO}
 cd Mooncake
 bash dependencies.sh
 mkdir build
