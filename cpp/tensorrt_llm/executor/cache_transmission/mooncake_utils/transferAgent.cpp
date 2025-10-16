@@ -64,24 +64,21 @@ void MooncakeTransferStatus::wait() const
             if (rc)
             {
                 TLLM_LOG_ERROR(
-                    "Failed to get transfer status for batch %lu, task %zu: error code %d (batch_id=%lu, task_id=%zu)",
-                    mBatchId, index, rc, mBatchId, index);
+                    "Failed to get transfer status for batch %lu, task %zu: error code %d", mBatchId, index, rc);
             }
             else
             {
-                TLLM_LOG_ERROR("Transfer failed for batch %lu, task %zu: status %d (batch_id=%lu, task_id=%zu)",
-                    mBatchId, index, status.status, mBatchId, index);
+                TLLM_LOG_ERROR("Transfer failed for batch %lu, task %zu: status %d", mBatchId, index, status.status);
             }
         }
         else if (status.status == STATUS_PENDING || status.status == STATUS_WAITING)
         {
-            TLLM_LOG_DEBUG("Transfer is pending for batch %lu, task %zu (batch_id=%lu, task_id=%zu)", mBatchId, index,
-                mBatchId, index);
+            TLLM_LOG_DEBUG("Transfer is pending for batch %lu, task %zu", mBatchId, index);
             return false;
         }
     }
     // Currently, we cannot distinguish between failed and completed from return value.
-    TLLM_LOG_DEBUG("Transfer is completed for batch %lu (batch_id=%lu)", mBatchId, mBatchId);
+    TLLM_LOG_DEBUG("Transfer is completed for batch %lu", mBatchId);
     return true;
 }
 
